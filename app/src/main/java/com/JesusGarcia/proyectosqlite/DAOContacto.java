@@ -35,6 +35,12 @@ public class DAOContacto {
 
     }
 
+    public int delete(String id){
+        String where="_id=?";
+        int idABorrar = _sqlSqLiteDatabase.delete(MyDB.TABLE_NAME_CONTACTOS,where,new String[]{id});
+        return idABorrar;
+    }
+
     public List<Contacto> getAll(){
         List<Contacto> lst = null;
 
