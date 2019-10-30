@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,11 +36,22 @@ public class DAOContacto {
                 cv);
 
     }
+    public long update(Contacto contacto, String id){
+        ContentValues cv =
+                new ContentValues();
+        cv.put(MyDB.COLUMNS_CONTACTOS[1],
+                contacto.getUsuario());
+        cv.put(MyDB.COLUMNS_CONTACTOS[2],
+                contacto.getEmail());
+        cv.put(MyDB.COLUMNS_CONTACTOS[3],
+                contacto.getTel());
+        cv.put(MyDB.COLUMNS_CONTACTOS[4],
+                contacto.getFechaNac());
+        return _sqlSqLiteDatabase.update(MyDB.TABLE_NAME_CONTACTOS,cv,"_id=?",new String[]{id});
+    }
 
     public int delete(String id){
-        String where="_id=?";
-        int idABorrar = _sqlSqLiteDatabase.delete(MyDB.TABLE_NAME_CONTACTOS,where,new String[]{id});
-        return idABorrar;
+        return _sqlSqLiteDatabase.delete(MyDB.TABLE_NAME_CONTACTOS,"_id=?",new String[]{id});
     }
 
     public List<Contacto> getAll(){

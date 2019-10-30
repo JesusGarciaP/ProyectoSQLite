@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -43,10 +44,10 @@ public class MainActivity extends AppCompatActivity {
         final DAOContacto dao = new DAOContacto(this);
         lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, final View view, int position, long id) {
+            public boolean onItemLongClick(AdapterView<?> parent, final View view, final int position, long id) {
 
                 List<Contacto> importar = dao.getAll();
-                final Contacto contactoParaEliminar = importar.get(position);
+                final Contacto contactoSeleccionado = importar.get(position);
 
                 AlertDialog.Builder menu = new AlertDialog.Builder(MainActivity.this);
                 CharSequence[] opciones = {"Editar","Eliminar"};
@@ -55,13 +56,20 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int opcion) {
                         switch (opcion){
                             case 0://Editar
+                                Intent intent = new Intent(MainActivity.this, Editar_Contacto.class);
+                                intent.putExtra("_id", contactoSeleccionado.getId());
+                                intent.putExtra("usuario", contactoSeleccionado.getUsuario());
+                                intent.putExtra("email", contactoSeleccionado.getEmail());
+                                intent.putExtra("tel", contactoSeleccionado.getTel());
+                                intent.putExtra("fechaNac", contactoSeleccionado.getFechaNac());
+                                startActivityForResult(intent,1000);
                                 break;
                             case 1://Eliminar
                                 Snackbar.make(view,"¿Estás seguro",Snackbar.LENGTH_LONG).setAction("SI",
                                         new View.OnClickListener(){
                                             @Override
                                             public void onClick(View view) {
-                                                String contact = contactoParaEliminar.id+"";
+                                                String contact = contactoSeleccionado.id+"";
                                                 dao.delete(contact);
                                                 onActivityResult(1000,-1,getIntent());
                                                 Toast.makeText(MainActivity.this, "elemento seleccionado: "+contact, Toast.LENGTH_SHORT).show();
@@ -98,4 +106,5 @@ public class MainActivity extends AppCompatActivity {
             lv.setAdapter(adp);
         }
     }
+
 }

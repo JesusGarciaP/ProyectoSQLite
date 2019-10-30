@@ -13,7 +13,7 @@ public class MyDB extends SQLiteOpenHelper {
                     "usuario text not null," +
                     "email text not null," +
                     "tel text not null," +
-                    "fechaNac date not null);";
+                    "fechaNac text not null);";
     public static final String[] COLUMNS_CONTACTOS =
             {"_id ", "usuario", "email", "tel","fechaNac"};
     public static final String TABLE_NAME_CONTACTOS =
