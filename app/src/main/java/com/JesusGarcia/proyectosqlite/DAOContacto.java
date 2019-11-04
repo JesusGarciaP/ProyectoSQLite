@@ -3,6 +3,7 @@ package com.JesusGarcia.proyectosqlite;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.widget.Toast;
@@ -34,8 +35,8 @@ public class DAOContacto {
                 MyDB.TABLE_NAME_CONTACTOS,
                 null,
                 cv);
-
     }
+
     public long update(Contacto contacto, String id){
         ContentValues cv =
                 new ContentValues();
@@ -52,6 +53,21 @@ public class DAOContacto {
 
     public int delete(String id){
         return _sqlSqLiteDatabase.delete(MyDB.TABLE_NAME_CONTACTOS,"_id=?",new String[]{id});
+    }
+
+    public Cursor filter(String inputText, String filterColumn) throws SQLException {
+        Cursor row = null;
+        String query = "SELECT * FROM " + MyDB.TABLE_NAME_CONTACTOS;
+        if (inputText == null || inputText.length() == 0) {
+            row = _sqlSqLiteDatabase.rawQuery(query, null);
+        } else {
+            query = "SELECT * FROM " + MyDB.TABLE_NAME_CONTACTOS + " WHERE " + filterColumn + " like '%" + inputText + "%'";
+            row = _sqlSqLiteDatabase.rawQuery(query, null);
+        }
+        if (row != null) {
+            row.moveToFirst();
+        }
+        return row;
     }
 
     public List<Contacto> getAll(){

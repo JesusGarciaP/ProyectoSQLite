@@ -3,14 +3,19 @@ package com.JesusGarcia.proyectosqlite;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -25,13 +30,41 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     ListView lv;
-    Button btnAdd;
-
+    Button btnAdd, btnSearch;
+    EditText txtFilter;
+    SimpleCursorAdapter adp;
+    Cursor c;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        btnSearch=findViewById(R.id.btnBuscar);
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                DAOContacto dao = new DAOContacto(getApplicationContext());
+
+                txtFilter=findViewById(R.id.txtBuscar);
+                String user = txtFilter.getText().toString();
+
+                Cursor filtro = dao.filter(user, "usuario");
+
+                adp = new SimpleCursorAdapter
+                        (getApplicationContext(), android.R.layout.simple_list_item_2,
+                                filtro,
+                                new String[]{"usuario", "email"},
+                                new int[]{android.R.id.text1,
+                                        android.R.id.text2},
+                                SimpleCursorAdapter.IGNORE_ITEM_VIEW_TYPE);
+                lv.setAdapter(adp);
+            }
+        });
+
+
+
         btnAdd=findViewById(R.id.btnAgregarC);
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         onActivityResult(1000,-1,getIntent());
+
+
         final DAOContacto dao = new DAOContacto(this);
         lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -92,11 +127,11 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==1000 && resultCode==RESULT_OK){
             DAOContacto dao = new DAOContacto(this);
-            Cursor c = dao.getAllCursor();
+            c = dao.getAllCursor();
 
             lv = findViewById(R.id.lv);
 
-            SimpleCursorAdapter adp = new SimpleCursorAdapter
+            adp = new SimpleCursorAdapter
                     (this, android.R.layout.simple_list_item_2,
                             c,
                             new String[]{"usuario", "email"},
@@ -105,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
                             SimpleCursorAdapter.IGNORE_ITEM_VIEW_TYPE);
             lv.setAdapter(adp);
         }
+
     }
 
 }
